@@ -3,451 +3,365 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة التحكم — أكاديمية محمد عيد سكر</title>
+<title>التسجيل — أكاديمية محمد عيد سكر</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#0E0620; --panel:#1B0E33; --panel-2:#241443;
-    --gold:#D4AF37; --gold-soft:#E9CE7A; --cream:#F6F1E4;
-    --muted:#B9AECF; --line:rgba(212,175,55,.25);
-    --danger:#f8d7da; --danger-text:#8a2f38;
+    --ink:#0E0620;
+    --panel:#1B0E33;
+    --panel-2:#241443;
+    --gold:#D4AF37;
+    --gold-soft:#E9CE7A;
+    --purple:#4B0082;
+    --cream:#F6F1E4;
+    --muted:#B9AECF;
+    --line:rgba(212,175,55,.25);
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
-    background:radial-gradient(1100px 600px at 85% -10%, rgba(75,0,130,.55), transparent 60%),
-      radial-gradient(900px 500px at -10% 110%, rgba(212,175,55,.12), transparent 55%), var(--ink);
-    color:var(--cream); font-family:'IBM Plex Sans Arabic', sans-serif; min-height:100vh;
+    background:
+      radial-gradient(1100px 600px at 85% -10%, rgba(75,0,130,.55), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(212,175,55,.12), transparent 55%),
+      var(--ink);
+    color:var(--cream);
+    font-family:'IBM Plex Sans Arabic', sans-serif;
+    min-height:100vh;
+    line-height:1.7;
   }
-  .wrap{max-width:1100px;margin:0 auto;padding:24px 16px 60px}
+  .wrap{max-width:920px;margin:0 auto;padding:48px 20px 80px}
 
-  #loginGate{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:99;flex-direction:column;gap:16px}
-  #loginGate input{padding:14px 18px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--cream);font-size:16px;width:260px;text-align:center}
-  #loginGate button{padding:12px 40px;border-radius:999px;border:none;background:linear-gradient(90deg,var(--gold-soft),var(--gold));color:var(--ink);font-weight:800;font-family:'Cairo',sans-serif;cursor:pointer}
-  #loginError{color:#f0a8a8;font-size:13px;min-height:18px}
+  .hero{text-align:center;margin-bottom:44px}
+  .eyebrow{
+    display:inline-block;font-family:'Cairo',sans-serif;font-weight:600;
+    letter-spacing:.5px;color:var(--gold-soft);font-size:14px;
+    border:1px solid var(--line);padding:6px 18px;border-radius:999px;margin-bottom:18px;
+  }
+  h1{
+    font-family:'Cairo',sans-serif;font-weight:900;font-size:clamp(28px,5vw,44px);
+    margin:0 0 14px;background:linear-gradient(90deg,var(--gold-soft),var(--gold) 55%,#fff2c9);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p{color:var(--muted);font-size:16px;max-width:520px;margin:0 auto}
 
-  .header{background:linear-gradient(135deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:20px}
-  .header h1{font-family:'Cairo',sans-serif;font-weight:900;font-size:24px;margin:0 0 4px;
-    background:linear-gradient(90deg,var(--gold-soft),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .header p{color:var(--muted);margin:0;font-size:13px}
+  .idcard{
+    margin:36px auto 0;max-width:420px;border-radius:18px;padding:26px 24px;
+    background:linear-gradient(150deg,var(--panel-2),var(--panel) 70%);
+    border:1px solid var(--line);
+    box-shadow:0 20px 50px -20px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.04);
+    position:relative;overflow:hidden;
+  }
+  .idcard::before{
+    content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(135deg,rgba(212,175,55,.05) 0 2px, transparent 2px 22px);
+    pointer-events:none;
+  }
+  .idcard .tag{font-family:'Cairo',sans-serif;font-weight:600;color:var(--gold-soft);font-size:12px;letter-spacing:1px}
+  .idcard .name{font-family:'Cairo',sans-serif;font-weight:800;font-size:22px;margin:8px 0 2px;min-height:30px}
+  .idcard .name.placeholder{color:var(--muted);font-weight:500;font-size:16px}
+  .idcard .row{display:flex;justify-content:space-between;margin-top:16px;font-size:13px;color:var(--muted)}
+  .idcard .id{font-family:'Cairo',sans-serif;font-weight:800;color:var(--gold);font-size:15px}
 
-  .tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .tab-btn{padding:10px 20px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted);
-    font-family:'Cairo',sans-serif;font-weight:700;cursor:pointer;font-size:14px;transition:.15s}
-  .tab-btn.active{background:linear-gradient(90deg,var(--gold-soft),var(--gold));color:var(--ink);border-color:transparent}
-  .tab-content{display:none}
-  .tab-content.active{display:block}
-
-  .pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-  .pill{padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-size:13px;cursor:pointer;color:var(--cream)}
-  .pill.selected{background:var(--gold);color:var(--ink);border-color:transparent;font-weight:700}
-  .pill b{margin-inline-start:6px}
-
-  .section{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px}
-  .section h2{font-family:'Cairo',sans-serif;font-size:15px;color:var(--gold-soft);margin:0 0 14px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-  label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
-  input,select,textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--cream);
-    border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit}
+  .section{
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:26px 24px;margin-top:22px;
+  }
+  .section h2{
+    font-family:'Cairo',sans-serif;font-size:16px;font-weight:700;color:var(--gold-soft);
+    margin:0 0 18px;display:flex;align-items:center;gap:8px;
+  }
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:600px){.grid{grid-template-columns:1fr}}
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+  input,select,textarea{
+    width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);
+    color:var(--cream);border-radius:10px;padding:12px 14px;font-size:15px;
+    font-family:inherit;transition:border-color .15s, background .15s;
+  }
+  input:focus,select:focus,textarea:focus{
+    outline:none;border-color:var(--gold);background:rgba(255,255,255,.06);
+  }
+  textarea{resize:vertical;min-height:80px}
+  .field{margin-bottom:16px}
+  .field:last-child{margin-bottom:0}
+  select{appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="9"><path d="M1 1l6 6 6-6" stroke="%23D4AF37" stroke-width="2" fill="none"/></svg>');background-repeat:no-repeat;background-position:left 14px center}
   select option{background:#F6F1E4;color:#1B0E33}
-  button.primary{font-family:'Cairo',sans-serif;font-weight:800;background:linear-gradient(90deg,var(--gold-soft),var(--gold));
-    color:var(--ink);border:none;border-radius:999px;padding:10px 26px;cursor:pointer;font-size:14px}
-  button.small{font-size:12px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--cream);cursor:pointer}
-  button.small.danger{border-color:var(--danger-text);color:#f0a8a8}
 
-  .student-card{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
-    padding:12px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:rgba(255,255,255,.02)}
-  .student-card .info b{font-family:'Cairo',sans-serif;font-size:14px}
-  .student-card .info span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
-  .student-card select{width:auto;min-width:150px}
+  .submit-row{margin-top:28px;text-align:center}
+  button{
+    font-family:'Cairo',sans-serif;font-weight:800;font-size:16px;
+    background:linear-gradient(90deg,var(--gold-soft),var(--gold));
+    color:#1B0E33;border:none;border-radius:999px;padding:15px 48px;
+    cursor:pointer;transition:transform .15s;
+  }
+  button:hover{transform:translateY(-2px)}
+  button:disabled{opacity:.6;cursor:not-allowed;transform:none}
 
-  .task-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
-    padding:10px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px}
-  .task-row .desc{font-size:13px;color:var(--muted)}
+  .msg{
+    margin-top:18px;padding:16px 18px;border-radius:12px;font-size:14px;text-align:center;
+    display:none;
+  }
+  .msg.show{display:block}
+  .msg.success{background:rgba(70,180,120,.12);border:1px solid rgba(70,180,120,.4);color:#a9e8c6}
+  .msg.duplicate{background:rgba(212,175,55,.1);border:1px solid var(--line);color:var(--gold-soft)}
+  .msg.error{background:rgba(220,80,80,.1);border:1px solid rgba(220,80,80,.4);color:#f0a8a8}
 
-  .empty{color:var(--muted);text-align:center;padding:20px;font-size:13px}
-  .loading{color:var(--muted);text-align:center;padding:20px;font-size:13px}
+  .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:40px}
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<div id="loginGate">
-  <div style="font-family:'Cairo',sans-serif;font-weight:900;font-size:20px;color:var(--gold-soft)">🎓 لوحة التحكم</div>
-  <input type="password" id="passwordInput" placeholder="كلمة السر">
-  <button onclick="tryLogin()">دخول</button>
-  <div id="loginError"></div>
-</div>
-
-<div class="wrap" id="mainApp" style="display:none">
-
-  <div class="header">
-    <h1>لوحة تحكم أكاديمية محمد عيد سكر</h1>
-    <p>إدارة الطلاب، المهام، العمولات، وإعدادات النظام</p>
+  <div class="hero">
+    <span class="eyebrow">أكاديمية محمد عيد سكر للتدريب والتسويق السياحي</span>
+    <h1>سجّل بياناتك الآن</h1>
+    <p>دقيقتان بس، وبنتواصل معاك بخصوص البرنامج اللي يهمك.</p>
   </div>
 
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('students')">👥 الطلاب</button>
-    <button class="tab-btn" onclick="switchTab('tasks')">✅ المهام</button>
-    <button class="tab-btn" onclick="switchTab('commissions')">💰 العمولات</button>
-    <button class="tab-btn" onclick="switchTab('settings')">⚙️ مركز التحكم</button>
+  <div class="idcard">
+    <div class="tag">بطاقة الطالب — معاينة</div>
+    <div class="name placeholder" id="previewName">اسمك هيظهر هنا...</div>
+    <div class="row">
+      <span id="previewProgram">البرنامج: —</span>
+      <span class="id" id="previewId">جاري التوليد عند الإرسال</span>
+    </div>
   </div>
 
-  <div class="tab-content active" id="tab-students">
-    <div class="pills" id="statusPills"></div>
+  <form id="regForm">
 
     <div class="section">
-      <h2 style="cursor:pointer" onclick="toggleAddForm()">➕ إضافة طالب يدوياً <span id="addFormArrow">▾</span></h2>
-      <div id="addStudentForm" style="display:none">
-        <div class="grid">
-          <div><label>الاسم الكامل (عربي) *</label><input type="text" id="addNameAr"></div>
-          <div><label>الاسم بالإنكليزي</label><input type="text" id="addNameEn"></div>
-          <div><label>رقم الواتساب *</label><input type="text" id="addWhatsapp"></div>
-          <div><label>الإيميل</label><input type="email" id="addEmail"></div>
-          <div><label>الدولة</label><input type="text" id="addCountry"></div>
-          <div><label>المدينة</label><input type="text" id="addCity"></div>
-          <div><label>البرنامج</label><select id="addProgram"></select></div>
-          <div><label>رقم الدفعة</label><input type="text" id="addBatch"></div>
-          <div><label>حالة الطالب</label><select id="addStatus"></select></div>
-          <div><label>من رشحه؟ (اسم المسوّق)</label><input type="text" id="addReferrer"></div>
+      <h2>📇 البيانات الشخصية</h2>
+      <div class="grid">
+        <div class="field">
+          <label>الاسم الكامل (عربي) *</label>
+          <input type="text" id="nameAr" required>
         </div>
-        <div style="margin-top:12px"><button class="primary" onclick="addStudentNow()">إضافة الطالب</button></div>
+        <div class="field">
+          <label>الاسم بالإنكليزي</label>
+          <input type="text" id="nameEn">
+        </div>
+        <div class="field">
+          <label>رقم الواتساب *</label>
+          <input type="tel" id="whatsapp" placeholder="00xxxxxxxxxx" required>
+        </div>
+        <div class="field">
+          <label>الإيميل</label>
+          <input type="email" id="email">
+        </div>
+        <div class="field">
+          <label>الدولة</label>
+          <input type="text" id="country">
+        </div>
+        <div class="field">
+          <label>مدينة الإقامة الحالية</label>
+          <input type="text" id="city">
+        </div>
       </div>
     </div>
 
     <div class="section">
-      <h2>بحث</h2>
-      <input type="text" id="studentSearch" placeholder="ابحث بالاسم أو الرقم أو الواتساب..." oninput="renderStudents()">
-    </div>
-    <div class="section">
-      <h2>قائمة الطلاب (<span id="studentCount">0</span>)</h2>
-      <div id="studentsList" class="loading">جاري التحميل...</div>
-    </div>
-  </div>
-
-  <div class="tab-content" id="tab-tasks">
-    <div class="section">
-      <h2>➕ إضافة مهمة</h2>
+      <h2>🎓 البرنامج التدريبي</h2>
       <div class="grid">
-        <div><label>المسؤول</label><input type="text" id="taskAssignee"></div>
-        <div><label>نوع المهمة</label>
-          <select id="taskType">
-            <option>مكتبي</option><option>ميداني</option><option>اتصال/متابعة</option>
+        <div class="field">
+          <label>البرنامج المهتم فيه</label>
+          <select id="program">
+            <option value="">اختر البرنامج</option>
+            <option>مبادرة مشروعي</option>
+            <option>التمكين في خدمة المعتمرين</option>
+            <option>دبلوم خدمات العمرة</option>
+            <option>التسويق السياحي الدولي</option>
+            <option>حكاية تسويق</option>
+            <option>أخرى</option>
           </select>
         </div>
-        <div><label>رقم الطالب المرتبط (اختياري)</label><input type="text" id="taskStudentId"></div>
-        <div><label>تاريخ الاستحقاق</label><input type="date" id="taskDueDate"></div>
+        <div class="field">
+          <label>رقم الدفعة (لو معروف)</label>
+          <input type="text" id="batch">
+        </div>
       </div>
-      <div style="margin-top:10px"><label>وصف المهمة</label><textarea id="taskDesc" rows="2"></textarea></div>
-      <div style="margin-top:12px"><button class="primary" onclick="addTaskNow()">إضافة المهمة</button></div>
     </div>
-    <div class="section">
-      <h2>سجل المهام (<span id="taskCount">0</span>)</h2>
-      <div id="tasksList" class="loading">جاري التحميل...</div>
-    </div>
-  </div>
 
-  <div class="tab-content" id="tab-commissions">
     <div class="section">
-      <h2>➕ إضافة مسوّق</h2>
+      <h2>💼 الخلفية العلمية والمهنية</h2>
       <div class="grid">
-        <div><label>اسم المسوّق</label><input type="text" id="marketerName"></div>
-        <div><label>رقم واتساب</label><input type="text" id="marketerWhatsapp"></div>
-        <div><label>نسبة العمولة %</label><input type="number" id="marketerPercent" value="10"></div>
+        <div class="field">
+          <label>المؤهل العلمي</label>
+          <select id="education">
+            <option value="">اختر</option>
+            <option>ثانوي</option>
+            <option>دبلوم / معهد</option>
+            <option>بكالوريوس / جامعي</option>
+            <option>ماجستير</option>
+            <option>دكتوراه</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>الفئة العمرية</label>
+          <select id="age">
+            <option value="">اختر</option>
+            <option>أقل من 21</option>
+            <option>من 21 ل 35</option>
+            <option>من 36 ل45</option>
+            <option>من 46 ل 55</option>
+            <option>فوق 55</option>
+          </select>
+        </div>
       </div>
-      <div style="margin-top:12px"><button class="primary" onclick="addMarketerNow()">إضافة المسوّق</button></div>
-      <p style="color:var(--muted);font-size:12px;margin-top:8px">ملاحظة: العمولة بتتحسب تلقائياً من عمود "من رشحه؟ (إحالة)" في قاعدة بيانات الطلاب — لازم اسم المسوّق يتكتب هناك بنفس الاسم بالظبط.</p>
+      <div class="field">
+        <label>العمل الحالي</label>
+        <input type="text" id="job">
+      </div>
+      <div class="field">
+        <label>الهدف من الانضمام</label>
+        <input type="text" id="goal">
+      </div>
     </div>
-    <div class="section">
-      <h2>تقرير العمولات</h2>
-      <div id="commissionsList" class="loading">جاري التحميل...</div>
-    </div>
-  </div>
 
-  <div class="tab-content" id="tab-settings">
     <div class="section">
-      <h2>🎓 قائمة البرامج التدريبية</h2>
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <input type="text" id="newProgram" placeholder="اسم برنامج جديد">
-        <button class="primary" onclick="addSettingNow('برنامج','newProgram')">إضافة</button>
+      <h2>🧠 المهارات</h2>
+      <div class="grid">
+        <div class="field">
+          <label>مهارات التسويق</label>
+          <select id="marketingSkills">
+            <option value="">اختر</option>
+            <option>لا اعرف</option>
+            <option>مبتدئ</option>
+            <option>وسط</option>
+            <option>جيد</option>
+            <option>ممتاز</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>مهارات الذكاء الصناعي</label>
+          <select id="aiSkills">
+            <option value="">اختر</option>
+            <option>لا اعرف</option>
+            <option>مبتدئ</option>
+            <option>وسط</option>
+            <option>جيد</option>
+            <option>ممتاز</option>
+          </select>
+        </div>
       </div>
-      <div id="programsList"></div>
-    </div>
-    <div class="section">
-      <h2>📣 قائمة مصادر المعرفة</h2>
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <input type="text" id="newSource" placeholder="مصدر جديد">
-        <button class="primary" onclick="addSettingNow('مصدر','newSource')">إضافة</button>
+      <div class="field">
+        <label>قابلية الظهور صوت وصورة</label>
+        <select id="onCamera">
+          <option value="">اختر</option>
+          <option>كتابة فقط</option>
+          <option>صوت فقط</option>
+          <option>صوت وصورة</option>
+        </select>
       </div>
-      <div id="sourcesList"></div>
     </div>
-  </div>
 
+    <div class="section">
+      <h2>🎯 الطموح المستقبلي</h2>
+      <div class="field">
+        <label>البرامج التدريبية التي تود حضورها مستقبلاً</label>
+        <input type="text" id="futurePrograms">
+      </div>
+      <div class="field">
+        <label>طموحك المستقبلي</label>
+        <textarea id="futureAmbition"></textarea>
+      </div>
+      <div class="field">
+        <label>أبرز التحديات / العقبات</label>
+        <textarea id="challenges"></textarea>
+      </div>
+    </div>
+
+    <div class="submit-row">
+      <button type="submit" id="submitBtn">إرسال التسجيل</button>
+      <div class="msg" id="msgBox"></div>
+    </div>
+
+  </form>
+
+  <div class="foot">أكاديمية محمد عيد سكر — mohamadeid.net</div>
 </div>
 
 <script>
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKpEQ3_wjl-vOoaAMkdmZf2J2pm_3iaWI0Oa65AK4zZLgaAGOT99WeecZAYs9soPHg/exec";
 
-  let allStudents = [];
-  let allTasks = [];
-  let allStatuses = [];
-  let selectedStatus = null;
+  const nameArInput = document.getElementById('nameAr');
+  const programInput = document.getElementById('program');
+  const previewName = document.getElementById('previewName');
+  const previewProgram = document.getElementById('previewProgram');
+  const previewId = document.getElementById('previewId');
 
-  async function tryLogin() {
-    const pw = document.getElementById('passwordInput').value;
-    document.getElementById('loginError').textContent = 'جاري التحقق...';
+  nameArInput.addEventListener('input', () => {
+    const v = nameArInput.value.trim();
+    if (v) { previewName.textContent = v; previewName.classList.remove('placeholder'); }
+    else { previewName.textContent = 'اسمك هيظهر هنا...'; previewName.classList.add('placeholder'); }
+  });
+  programInput.addEventListener('change', () => {
+    previewProgram.textContent = 'البرنامج: ' + (programInput.value || '—');
+  });
+
+  const form = document.getElementById('regForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const msgBox = document.getElementById('msgBox');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'جاري الإرسال...';
+    msgBox.className = 'msg';
+
+    const payload = {
+      nameAr: document.getElementById('nameAr').value.trim(),
+      nameEn: document.getElementById('nameEn').value.trim(),
+      whatsapp: document.getElementById('whatsapp').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      country: document.getElementById('country').value.trim(),
+      city: document.getElementById('city').value.trim(),
+      program: document.getElementById('program').value,
+      batch: document.getElementById('batch').value.trim(),
+      education: document.getElementById('education').value,
+      age: document.getElementById('age').value,
+      job: document.getElementById('job').value.trim(),
+      futurePrograms: document.getElementById('futurePrograms').value.trim(),
+      futureAmbition: document.getElementById('futureAmbition').value.trim(),
+      goal: document.getElementById('goal').value.trim(),
+      marketingSkills: document.getElementById('marketingSkills').value,
+      aiSkills: document.getElementById('aiSkills').value,
+      onCamera: document.getElementById('onCamera').value,
+      challenges: document.getElementById('challenges').value.trim()
+    };
+
     try {
-      const res = await fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'login', password: pw}) });
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+      });
       const data = await res.json();
+
       if (data.status === 'success') {
-        document.getElementById('loginGate').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        initApp();
+        msgBox.textContent = '✅ ' + data.message;
+        msgBox.classList.add('show', 'success');
+        previewId.textContent = 'رقمك: ' + data.id;
+        form.reset();
+        previewName.textContent = 'اسمك هيظهر هنا...';
+        previewName.classList.add('placeholder');
+        previewProgram.textContent = 'البرنامج: —';
+      } else if (data.status === 'duplicate') {
+        msgBox.textContent = 'ℹ️ ' + data.message;
+        msgBox.classList.add('show', 'duplicate');
+        previewId.textContent = 'رقمك: ' + data.id;
       } else {
-        document.getElementById('loginError').textContent = 'كلمة السر غلط';
+        msgBox.textContent = '⚠️ حصل خطأ: ' + data.message;
+        msgBox.classList.add('show', 'error');
       }
-    } catch(err) {
-      document.getElementById('loginError').textContent = 'تعذر الاتصال';
+    } catch (err) {
+      msgBox.textContent = '⚠️ تعذر الاتصال بالسيستم. حاول مرة تانية.';
+      msgBox.classList.add('show', 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'إرسال التسجيل';
     }
-  }
-
-  function switchTab(name) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    event.target.classList.add('active');
-    document.getElementById('tab-' + name).classList.add('active');
-  }
-
-  async function apiGet(action) {
-    const res = await fetch(SCRIPT_URL + '?action=' + action);
-    return res.json();
-  }
-  async function apiPost(payload) {
-    const res = await fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify(payload) });
-    return res.json();
-  }
-
-  async function initApp() {
-    const statusesRes = await apiGet('statuses');
-    allStatuses = statusesRes.data || [];
-    populateAddFormLists();
-    await loadStudents();
-    await loadTasks();
-    await loadCommissions();
-    await loadSettings();
-  }
-
-  async function loadStudents() {
-    const res = await apiGet('students');
-    allStudents = res.data || [];
-    renderPills();
-    renderStudents();
-  }
-
-  function renderPills() {
-    const counts = {};
-    allStatuses.forEach(s => counts[s] = 0);
-    allStudents.forEach(s => { counts[s.status] = (counts[s.status]||0) + 1; });
-    const container = document.getElementById('statusPills');
-    container.innerHTML = '<div class="pill' + (selectedStatus===null?' selected':'') + '" onclick="filterByStatus(null)">الكل <b>' + allStudents.length + '</b></div>' +
-      allStatuses.map(s => '<div class="pill' + (selectedStatus===s?' selected':'') + '" onclick="filterByStatus(\'' + s + '\')">' + s + ' <b>' + (counts[s]||0) + '</b></div>').join('');
-  }
-
-  function filterByStatus(status) {
-    selectedStatus = status;
-    renderPills();
-    renderStudents();
-  }
-
-  function renderStudents() {
-    const q = (document.getElementById('studentSearch').value || '').trim().toLowerCase();
-    let list = allStudents;
-    if (selectedStatus) list = list.filter(s => s.status === selectedStatus);
-    if (q) list = list.filter(s => (s.nameAr||'').toLowerCase().includes(q) || String(s.id).includes(q) || (s.whatsapp||'').includes(q));
-
-    document.getElementById('studentCount').textContent = list.length;
-    const container = document.getElementById('studentsList');
-    if (list.length === 0) { container.innerHTML = '<div class="empty">مفيش نتائج</div>'; return; }
-
-    container.innerHTML = list.map(s => `
-      <div class="student-card">
-        <div class="info">
-          <b>${s.nameAr} (${s.id})</b>
-          <span>${s.whatsapp || ''} — ${s.program || 'بدون برنامج'} ${s.batch ? '- دفعة ' + s.batch : ''}</span>
-        </div>
-        <select onchange="changeStatus('${s.id}', this.value)">
-          ${allStatuses.map(st => `<option value="${st}" ${st===s.status?'selected':''}>${st}</option>`).join('')}
-        </select>
-      </div>
-    `).join('');
-  }
-
-  async function changeStatus(id, newStatus) {
-    await apiPost({ action:'updateStudentStatus', id, status: newStatus });
-    const s = allStudents.find(x => String(x.id) === String(id));
-    if (s) s.status = newStatus;
-    renderPills();
-  }
-
-  async function loadTasks() {
-    const res = await apiGet('tasks');
-    allTasks = res.data || [];
-    renderTasks();
-  }
-
-  function renderTasks() {
-    document.getElementById('taskCount').textContent = allTasks.length;
-    const container = document.getElementById('tasksList');
-    if (allTasks.length === 0) { container.innerHTML = '<div class="empty">مفيش مهام لسه</div>'; return; }
-    container.innerHTML = allTasks.slice().reverse().map(t => `
-      <div class="task-row">
-        <div>
-          <b>${t.type} — ${t.assignee}</b>
-          <div class="desc">${t.description} ${t.studentId ? '(طالب #' + t.studentId + ')' : ''} ${t.dueDate ? '— يستحق ' + t.dueDate : ''}</div>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <select onchange="changeTaskStatus(${t.id}, this.value)">
-            <option ${t.status==='لم يبدأ'?'selected':''}>لم يبدأ</option>
-            <option ${t.status==='جاري'?'selected':''}>جاري</option>
-            <option ${t.status==='تم'?'selected':''}>تم</option>
-          </select>
-          <button class="small danger" onclick="removeTask(${t.id})">حذف</button>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  async function addTaskNow() {
-    const payload = {
-      action:'addTask',
-      assignee: document.getElementById('taskAssignee').value,
-      type: document.getElementById('taskType').value,
-      description: document.getElementById('taskDesc').value,
-      studentId: document.getElementById('taskStudentId').value,
-      dueDate: document.getElementById('taskDueDate').value,
-      status: 'لم يبدأ'
-    };
-    await apiPost(payload);
-    document.getElementById('taskAssignee').value='';
-    document.getElementById('taskDesc').value='';
-    document.getElementById('taskStudentId').value='';
-    document.getElementById('taskDueDate').value='';
-    await loadTasks();
-  }
-
-  async function changeTaskStatus(id, status) {
-    await apiPost({ action:'updateTaskStatus', id, status });
-    const t = allTasks.find(x => x.id == id);
-    if (t) t.status = status;
-  }
-
-  async function removeTask(id) {
-    await apiPost({ action:'deleteTask', id });
-    await loadTasks();
-  }
-
-  async function loadCommissions() {
-    const res = await apiGet('commissionReport');
-    const list = res.data || [];
-    const container = document.getElementById('commissionsList');
-    if (list.length === 0) { container.innerHTML = '<div class="empty">مفيش مسوّقين مضافين لسه</div>'; return; }
-    container.innerHTML = list.map(m => `
-      <div class="student-card">
-        <div class="info">
-          <b>${m.name}</b>
-          <span>${m.whatsapp || ''} — نسبة ${m.percent}% — إجمالي محصّل من طلابه: $${m.totalPaid.toFixed(2)}</span>
-        </div>
-        <div style="font-family:'Cairo',sans-serif;font-weight:800;color:var(--gold)">$${m.commission.toFixed(2)}</div>
-      </div>
-    `).join('');
-  }
-
-  async function addMarketerNow() {
-    const payload = {
-      action:'addMarketer',
-      name: document.getElementById('marketerName').value,
-      whatsapp: document.getElementById('marketerWhatsapp').value,
-      percent: document.getElementById('marketerPercent').value
-    };
-    if (!payload.name) return;
-    await apiPost(payload);
-    document.getElementById('marketerName').value='';
-    document.getElementById('marketerWhatsapp').value='';
-    await loadCommissions();
-  }
-
-  async function loadSettings() {
-    const res = await apiGet('settings');
-    const data = res.data || { programs: [], sources: [] };
-    document.getElementById('programsList').innerHTML = data.programs.map(p => `
-      <div class="task-row"><span>${p}</span><button class="small danger" onclick="removeSetting('برنامج','${p}')">حذف</button></div>
-    `).join('') || '<div class="empty">مفيش برامج مضافة من هنا لسه</div>';
-    document.getElementById('sourcesList').innerHTML = data.sources.map(s => `
-      <div class="task-row"><span>${s}</span><button class="small danger" onclick="removeSetting('مصدر','${s}')">حذف</button></div>
-    `).join('') || '<div class="empty">مفيش مصادر مضافة من هنا لسه</div>';
-
-    const programSelect = document.getElementById('addProgram');
-    const defaultPrograms = ['مبادرة مشروعي','التمكين في خدمة المعتمرين','دبلوم خدمات العمرة','التسويق السياحي الدولي','حكاية تسويق'];
-    const allPrograms = [...new Set([...defaultPrograms, ...data.programs])];
-    programSelect.innerHTML = '<option value="">اختر البرنامج</option>' + allPrograms.map(p => `<option>${p}</option>`).join('');
-  }
-
-  async function addSettingNow(type, inputId) {
-    const val = document.getElementById(inputId).value.trim();
-    if (!val) return;
-    await apiPost({ action:'addSetting', type, value: val });
-    document.getElementById(inputId).value = '';
-    await loadSettings();
-  }
-
-  async function removeSetting(type, value) {
-    await apiPost({ action:'deleteSetting', type, value });
-    await loadSettings();
-  }
-
-  function toggleAddForm() {
-    const el = document.getElementById('addStudentForm');
-    const arrow = document.getElementById('addFormArrow');
-    const open = el.style.display !== 'none';
-    el.style.display = open ? 'none' : 'block';
-    arrow.textContent = open ? '▾' : '▴';
-  }
-
-  function populateAddFormLists() {
-    const statusSel = document.getElementById('addStatus');
-    statusSel.innerHTML = allStatuses.map(s => `<option value="${s}">${s}</option>`).join('');
-  }
-
-  async function addStudentNow() {
-    const nameAr = document.getElementById('addNameAr').value.trim();
-    const whatsapp = document.getElementById('addWhatsapp').value.trim();
-    if (!nameAr || !whatsapp) { alert('الاسم ورقم الواتساب مطلوبين'); return; }
-
-    const payload = {
-      action: 'register',
-      nameAr, whatsapp,
-      nameEn: document.getElementById('addNameEn').value.trim(),
-      email: document.getElementById('addEmail').value.trim(),
-      country: document.getElementById('addCountry').value.trim(),
-      city: document.getElementById('addCity').value.trim(),
-      program: document.getElementById('addProgram').value,
-      batch: document.getElementById('addBatch').value.trim(),
-      referrer: document.getElementById('addReferrer').value.trim()
-    };
-
-    const res = await apiPost(payload);
-    if (res.status === 'success') {
-      const wantedStatus = document.getElementById('addStatus').value;
-      if (wantedStatus && wantedStatus !== 'طالب جديد') {
-        await apiPost({ action:'updateStudentStatus', id: res.id, status: wantedStatus });
-      }
-      ['addNameAr','addNameEn','addWhatsapp','addEmail','addCountry','addCity','addBatch','addReferrer'].forEach(id => document.getElementById(id).value = '');
-      alert(res.message);
-      await loadStudents();
-    } else {
-      alert(res.message || 'حصل خطأ');
-    }
-  }
+  });
 </script>
 </body>
 </html>
