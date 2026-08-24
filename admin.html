@@ -68,6 +68,14 @@
 
   .empty{color:var(--muted);text-align:center;padding:20px;font-size:13px}
   .loading{color:var(--muted);text-align:center;padding:20px;font-size:13px}
+
+  /* ---- Modal ---- */
+  #studentModal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+  #studentModal .modal-box{background:var(--panel);border:1px solid var(--line);border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;padding:24px}
+  #studentModal h2{font-family:'Cairo',sans-serif;color:var(--gold-soft);margin:0 0 16px}
+  #studentModal .close-btn{float:left;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer}
+  #studentModal .field-row{margin-bottom:12px}
+  #studentModal textarea{min-height:60px}
 </style>
 </head>
 <body>
@@ -111,6 +119,7 @@
           <div><label>رقم الدفعة</label><input type="text" id="addBatch"></div>
           <div><label>حالة الطالب</label><select id="addStatus"></select></div>
           <div><label>من رشحه؟ (اسم المسوّق)</label><input type="text" id="addReferrer"></div>
+          <div><label>مصدر المعرفة</label><select id="addSource"></select></div>
         </div>
         <div style="margin-top:12px"><button class="primary" onclick="addStudentNow()">إضافة الطالب</button></div>
       </div>
@@ -196,6 +205,15 @@
     </div>
   </div>
 
+</div>
+
+<div id="studentModal">
+  <div class="modal-box">
+    <button class="close-btn" onclick="closeStudentModal()">✕</button>
+    <h2 id="modalTitle">تفاصيل الطالب</h2>
+    <div id="modalFields"></div>
+    <div style="margin-top:16px"><button class="primary" onclick="saveStudentDetail()">حفظ التعديلات</button></div>
+  </div>
 </div>
 
 <script>
@@ -308,9 +326,12 @@
           <b>${s.nameAr} (${s.id})</b>
           <span>${s.whatsapp || ''} — ${s.program || 'بدون برنامج'} ${s.batch ? '- دفعة ' + s.batch : ''}</span>
         </div>
-        <select onchange="changeStatus('${s.id}', this.value)">
-          ${allStatuses.map(st => `<option value="${st}" ${st===s.status?'selected':''}>${st}</option>`).join('')}
-        </select>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="small" onclick="openStudentModal('${s.id}')">عرض التفاصيل</button>
+          <select onchange="changeStatus('${s.id}', this.value)">
+            ${allStatuses.map(st => `<option value="${st}" ${st===s.status?'selected':''}>${st}</option>`).join('')}
+          </select>
+        </div>
       </div>
     `).join('');
   }
@@ -390,7 +411,10 @@
           <b>${m.name}</b>
           <span>${m.whatsapp || ''} — نسبة ${m.percent}% — إجمالي محصّل من طلابه: $${m.totalPaid.toFixed(2)}</span>
         </div>
-        <div style="font-family:'Cairo',sans-serif;font-weight:800;color:var(--gold)">$${m.commission.toFixed(2)}</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-family:'Cairo',sans-serif;font-weight:800;color:var(--gold)">$${m.commission.toFixed(2)}</div>
+          <button class="small danger" onclick="removeMarketer('${m.name}')">حذف</button>
+        </div>
       </div>
     `).join('');
   }
@@ -409,6 +433,11 @@
     await loadCommissions();
   }
 
+  async function removeMarketer(name) {
+    await apiPost({ action:'deleteMarketer', name });
+    await loadCommissions();
+  }
+
   async function loadSettings() {
     const res = await apiGet('settings');
     const data = res.data || { programs: [], sources: [] };
@@ -423,6 +452,11 @@
     const defaultPrograms = ['مبادرة مشروعي','التمكين في خدمة المعتمرين','دبلوم خدمات العمرة','التسويق السياحي الدولي','حكاية تسويق'];
     const allPrograms = [...new Set([...defaultPrograms, ...data.programs])];
     programSelect.innerHTML = '<option value="">اختر البرنامج</option>' + allPrograms.map(p => `<option>${p}</option>`).join('');
+
+    const sourceSelect = document.getElementById('addSource');
+    const defaultSources = ['فيسبوك','إنستغرام','واتساب','إحالة'];
+    const allSources = [...new Set([...defaultSources, ...data.sources])];
+    sourceSelect.innerHTML = '<option value="">اختر المصدر</option>' + allSources.map(s => `<option>${s}</option>`).join('');
   }
 
   async function addSettingNow(type, inputId) {
@@ -465,7 +499,8 @@
       city: document.getElementById('addCity').value.trim(),
       program: document.getElementById('addProgram').value,
       batch: document.getElementById('addBatch').value.trim(),
-      referrer: document.getElementById('addReferrer').value.trim()
+      referrer: document.getElementById('addReferrer').value.trim(),
+      source: document.getElementById('addSource').value
     };
 
     const res = await apiPost(payload);
@@ -476,6 +511,74 @@
       }
       ['addNameAr','addNameEn','addWhatsapp','addEmail','addCountry','addCity','addBatch','addReferrer'].forEach(id => document.getElementById(id).value = '');
       alert(res.message);
+      await loadStudents();
+    } else {
+      alert(res.message || 'حصل خطأ');
+    }
+  }
+
+  let currentModalStudentId = null;
+
+  const FIELD_LABELS = {
+    nameAr: 'الاسم الكامل (عربي)',
+    nameEn: 'الاسم بالإنكليزي',
+    whatsapp: 'رقم الواتساب',
+    email: 'الإيميل',
+    country: 'الدولة',
+    city: 'المدينة',
+    age: 'الفئة العمرية',
+    education: 'المؤهل العلمي',
+    job: 'العمل الحالي',
+    goal: 'الهدف من الانضمام',
+    marketingSkills: 'مهارات التسويق',
+    aiSkills: 'مهارات الذكاء الصناعي',
+    onCamera: 'قابلية الظهور صوت وصورة',
+    futureAmbition: 'الطموح المستقبلي',
+    challenges: 'أبرز التحديات / العقبات',
+    futurePrograms: 'البرامج المستقبلية',
+    currentProgram: 'اسم البرنامج',
+    currentBatch: 'رقم الدفعة',
+    source: 'مصدر المعرفة بنا',
+    referrer: 'من رشحه؟ (إحالة)'
+  };
+  const TEXTAREA_FIELDS = ['futureAmbition', 'challenges', 'futurePrograms', 'goal'];
+
+  async function openStudentModal(id) {
+    currentModalStudentId = id;
+    document.getElementById('studentModal').style.display = 'flex';
+    document.getElementById('modalFields').innerHTML = '<div class="loading">جاري التحميل...</div>';
+
+    const res = await apiGet('studentDetail&id=' + id);
+    const s = res.data;
+    if (!s) { document.getElementById('modalFields').innerHTML = '<div class="empty">تعذر تحميل البيانات</div>'; return; }
+
+    document.getElementById('modalTitle').textContent = 'تفاصيل الطالب — ' + s.nameAr + ' (#' + s.id + ')';
+
+    document.getElementById('modalFields').innerHTML = Object.keys(FIELD_LABELS).map(key => {
+      const val = (s[key] || '').toString().replace(/"/g, '&quot;');
+      if (TEXTAREA_FIELDS.includes(key)) {
+        return `<div class="field-row"><label>${FIELD_LABELS[key]}</label><textarea id="modal_${key}">${val}</textarea></div>`;
+      }
+      return `<div class="field-row"><label>${FIELD_LABELS[key]}</label><input type="text" id="modal_${key}" value="${val}"></div>`;
+    }).join('');
+  }
+
+  function closeStudentModal() {
+    document.getElementById('studentModal').style.display = 'none';
+    currentModalStudentId = null;
+  }
+
+  async function saveStudentDetail() {
+    if (!currentModalStudentId) return;
+    const fields = {};
+    Object.keys(FIELD_LABELS).forEach(key => {
+      const el = document.getElementById('modal_' + key);
+      if (el) fields[key] = el.value;
+    });
+    const res = await apiPost({ action:'updateStudentFull', id: currentModalStudentId, fields });
+    if (res.status === 'success') {
+      alert('تم الحفظ');
+      closeStudentModal();
       await loadStudents();
     } else {
       alert(res.message || 'حصل خطأ');
