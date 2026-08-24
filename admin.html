@@ -88,6 +88,7 @@
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('students')">👥 الطلاب</button>
+    <button class="tab-btn" onclick="switchTab('finance')">📊 التقرير المالي</button>
     <button class="tab-btn" onclick="switchTab('tasks')">✅ المهام</button>
     <button class="tab-btn" onclick="switchTab('commissions')">💰 العمولات</button>
     <button class="tab-btn" onclick="switchTab('settings')">⚙️ مركز التحكم</button>
@@ -122,6 +123,18 @@
     <div class="section">
       <h2>قائمة الطلاب (<span id="studentCount">0</span>)</h2>
       <div id="studentsList" class="loading">جاري التحميل...</div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-finance">
+    <div class="pills" style="margin-bottom:20px">
+      <div class="pill" style="cursor:default">إجمالي المحصّل <b id="finCollected">$0</b></div>
+      <div class="pill" style="cursor:default">إجمالي المتبقي <b id="finRemaining">$0</b></div>
+      <div class="pill" style="cursor:default">عدد الطلاب النشطين <b id="finStudents">0</b></div>
+    </div>
+    <div class="section">
+      <h2>تفصيل حسب البرنامج والدفعة</h2>
+      <div id="financeTable" class="loading">جاري التحميل...</div>
     </div>
   </div>
 
@@ -232,9 +245,29 @@
     allStatuses = statusesRes.data || [];
     populateAddFormLists();
     await loadStudents();
+    await loadFinance();
     await loadTasks();
     await loadCommissions();
     await loadSettings();
+  }
+
+  async function loadFinance() {
+    const res = await apiGet('financialReport');
+    const d = res.data || { totalCollected:0, totalRemaining:0, totalStudents:0, byProgram:[] };
+    document.getElementById('finCollected').textContent = '$' + d.totalCollected.toFixed(2);
+    document.getElementById('finRemaining').textContent = '$' + d.totalRemaining.toFixed(2);
+    document.getElementById('finStudents').textContent = d.totalStudents;
+
+    const container = document.getElementById('financeTable');
+    if (d.byProgram.length === 0) { container.innerHTML = '<div class="empty">مفيش بيانات</div>'; return; }
+    container.innerHTML = d.byProgram.map(g => `
+      <div class="student-card">
+        <div class="info">
+          <b>${g.program} ${g.batch !== '-' ? '— دفعة ' + g.batch : ''}</b>
+          <span>${g.students} طالب — محصّل $${g.collected.toFixed(2)} — متبقي $${g.remaining.toFixed(2)}</span>
+        </div>
+      </div>
+    `).join('');
   }
 
   async function loadStudents() {
